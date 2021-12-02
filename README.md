@@ -13,6 +13,7 @@ sudo apt install libxxf86vm-dev
 sudo apt install libgl1-mesa-dev libglu1-mesa-dev
 sudo apt install libxext-dev
 sudo apt install libxcursor-dev
+sudo apt install libavcodec-dev libavformat-dev libswscale-dev libavutil-dev libavdevice-dev
 ```
 
 In the root directory, 

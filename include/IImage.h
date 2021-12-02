@@ -183,7 +183,11 @@ public:
 	{
 		return Data;
 	}
-
+    
+    u8* getImageData() const
+    {
+        return Data;
+    }
 	//! Lock function. Use this to get a pointer to the image data.
 	/** Use getData instead.
 	\return Pointer to the image data. What type of data is pointed to

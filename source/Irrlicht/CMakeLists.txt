@@ -8,12 +8,24 @@ ADD_DEFINITIONS( -D_CRT_SECURE_NO_DEPRECATE )
 
 set(CMAKE_CFLAGS "-I../../include -Izlib -Ijpeglib -Ilibpng")
 set(CMAKE_CXX_FLAGS "-Wall -pipe -fno-exceptions -fno-rtti")
+set(CMAKE_CXX_FLAGS "-D__STDC_CONSTANT_MACROS")
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
+    libavdevice
+    libavfilter
+    libavformat
+    libavcodec
+    libswresample
+    libswscale
+    libavutil
+)
 
 if(APPLE)
 add_compile_options(-Wno-deprecated-declarations)
 add_compile_options(-x objective-c++)
 set(CMAKE_EXE_LINKER_FLAGS "-framework.cppundation -framework.cppcoa -framework AppKit -framework opengl -framework.cppKit")
 endif (APPLE)
+add_compile_options(-Wno-deprecated-declarations)
 
 include_directories(../../include)
 include_directories(zlib)
@@ -50,5 +62,7 @@ endif(APPLE)
 if(UNIX AND NOT APPLE)
 ADD_LIBRARY(Irrlicht ${SRC} ${LIBAESGM} ${BZIP2OBJ} ${LZMAOBJ} ${JPEGLIBOBJ} ${LIBPNGOBJ} ${ZLIBOBJ})
 endif(UNIX AND NOT APPLE)
+
+target_link_libraries(Irrlicht PkgConfig::LIBAV)
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../../lib)

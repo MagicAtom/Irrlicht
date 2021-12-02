@@ -19,6 +19,8 @@
 #include "EDriverFeatures.h"
 #include "SExposedVideoData.h"
 #include "SOverrideMaterial.h"
+#include "IEncoder.h"
+//#include "IStreamer.h"
 
 namespace irr
 {
@@ -150,6 +152,9 @@ namespace video
 	*/
 	class IVideoDriver : public virtual IReferenceCounted
 	{
+    private:
+        IEncoder* encoder;
+        //IRTCStreamer* streamer;
 	public:
 
 		//! Applications must call this method before performing any rendering.
@@ -168,7 +173,47 @@ namespace video
 		\return False if failed. */
 		virtual bool beginScene(u16 clearFlag=(u16)(ECBF_COLOR|ECBF_DEPTH), SColor clearColor = SColor(255,0,0,0), f32 clearDepth = 1.f, u8 clearStencil = 0,
 			const SExposedVideoData& videoData=SExposedVideoData(), core::rect<s32>* sourceRect = 0) = 0;
+        
+        void createEncoder(){
+            core::dimension2d<u32> screenSize = this->getScreenSize();
+            encoder = new IEncoder(screenSize);
+            encoder->Init();
+        }
+        
+        void recordScreen()
+        {
+            uint8_t* ret_buf;
+            int ret_buf_size = 0;
+            IImage* image = createScreenShot();
+            encoder->GenOnePkt(image->getImageData(), &ret_buf, ret_buf_size);
+            image->drop();
+        }
+        
+        void dropEncoder()
+        {
+            encoder->EndEncode();
+        }
+        
+        //void createStreamer(std::string ip_addr,int port)
+        //{
+        //    streamer = new IRTCStreamer(ip_addr,port);
+        //    streamer->setUp();
+        //}
 
+        //! create a new streamer
+        //void publish(){
+        //    uint8_t* ret_buf;
+        //    int ret_buf_size = 0;
+        //    IImage* image = createScreenShot();
+        //    encoder->GenOnePkt(image->getImageData(), &ret_buf, ret_buf_size);
+        //    streamer->publish(ret_buf,ret_buf_size);
+        //    image->drop();
+        //}
+
+        //void dropStreamer(){
+        //    delete streamer;
+        //}
+        
 		//! Alternative beginScene implementation. Can't clear stencil buffer, but otherwise identical to other beginScene
 		bool beginScene(bool backBuffer, bool zBuffer, SColor color = SColor(255,0,0,0),
 			const SExposedVideoData& videoData = SExposedVideoData(), core::rect<s32>* sourceRect = 0)
