@@ -20,7 +20,7 @@
 #include "SExposedVideoData.h"
 #include "SOverrideMaterial.h"
 #include "IEncoder.h"
-//#include "IStreamer.h"
+#include "IStreamer.h"
 
 namespace irr
 {
@@ -154,7 +154,7 @@ namespace video
 	{
     private:
         IEncoder* encoder;
-        //IRTCStreamer* streamer;
+        IRTCStreamer* streamer;
 	public:
 
 		//! Applications must call this method before performing any rendering.
@@ -194,25 +194,27 @@ namespace video
             encoder->EndEncode();
         }
         
-        //void createStreamer(std::string ip_addr,int port)
-        //{
-        //    streamer = new IRTCStreamer(ip_addr,port);
-        //    streamer->setUp();
-        //}
+        void createStreamer(std::string ip_addr,int port)
+        {
+		createEncoder();
+		encoder->Init();
+            streamer = new IRTCStreamer(ip_addr,port);
+            streamer->setUp();
+        }
 
         //! create a new streamer
-        //void publish(){
-        //    uint8_t* ret_buf;
-        //    int ret_buf_size = 0;
-        //    IImage* image = createScreenShot();
-        //    encoder->GenOnePkt(image->getImageData(), &ret_buf, ret_buf_size);
-        //    streamer->publish(ret_buf,ret_buf_size);
-        //    image->drop();
-        //}
+        void publish(){
+            uint8_t* ret_buf;
+            int ret_buf_size = 0;
+            IImage* image = createScreenShot();
+            encoder->GenOnePkt(image->getImageData(), &ret_buf, ret_buf_size);
+            streamer->publish(ret_buf,ret_buf_size);
+            image->drop();
+	}
 
-        //void dropStreamer(){
-        //    delete streamer;
-        //}
+        void dropStreamer(){
+            delete streamer;
+        }
         
 		//! Alternative beginScene implementation. Can't clear stencil buffer, but otherwise identical to other beginScene
 		bool beginScene(bool backBuffer, bool zBuffer, SColor color = SColor(255,0,0,0),
