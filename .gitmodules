@@ -1,4 +1,0 @@
-
-[submodule "source/Irrlicht/libdatachannel"]
-	path = source/Irrlicht/libdatachannel
-	url = https://github.com/paullouisageneau/libdatachannel.git
