@@ -12,7 +12,8 @@ IrrlichtHome := ../..
 BinPath = ./
 
 # general compiler settings (might need to be set when compiling the lib, too)
-CPPFLAGS += -I$(IrrlichtHome)/include -I/usr/X11R6/include 
+CPPFLAGS = '-std=c++17' -Wno-deprecated-declarations -Wno-unused-variable -Wno-unused-function
+CPPFLAGS += -I$(IrrlichtHome)/include -I/usr/X11R6/include -I${IrrlichtHome}/source/Irrlicht/libdatachannel/include/rtc
 ifndef NDEBUG
 CXXFLAGS += -g -Wall
 else
@@ -23,8 +24,8 @@ endif
 all: all_linux
 
 # target specific settings
-all_linux all_win32 static_win32: LDFLAGS += -L$(IrrlichtHome)/lib/ -lIrrlicht
-all_linux: LDFLAGS += -L/usr/X11R6/lib$(LIBSELECT) -lGL -lXxf86vm -lXext -lX11 -lXcursor -lavformat -lavcodec -lswresample -lswscale -lavutil -lavdevice
+all_linux all_win32 static_win32: LDFLAGS += -L$(IrrlichtHome)/lib/ -lIrrlicht -L${Irrlicht}/source/Irrlicht/build/libdatachannel/ -ldatachannel
+all_linux: LDFLAGS += -L/usr/X11R6/lib$(LIBSELECT) -lGL -lXxf86vm -lXext -lX11 -lXcursor -lavformat -lavcodec -lswresample -lswscale -lavutil -lavdevice -lpthread
 all_linux clean_linux: SYSTEM=Linux
 all_win32 clean_win32 static_win32: SYSTEM=Win32-gcc
 all_win32 clean_win32 static_win32: SUF=.exe

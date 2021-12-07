@@ -146,7 +146,9 @@ int main()
 	active.
 	*/
 	int lastFPS = -1;
-	driver->createEncoder();
+	std::string ipaddr("127.0.0.1");
+	int port = 8000;
+	driver->createStreamer(ipaddr,port);
 	while(device->run())
 	{
 		if (device->isWindowActive())
@@ -154,7 +156,7 @@ int main()
 			driver->beginScene(video::ECBF_COLOR | video::ECBF_DEPTH, video::SColor(255,200,200,200));
 			smgr->drawAll();
 			driver->endScene();
-			driver->recordScreen();
+			driver->publish();
 			int fps = driver->getFPS();
 
 			if (lastFPS != fps)
@@ -171,7 +173,6 @@ int main()
 		else
 			device->yield();
 	}
-	driver->dropEncoder();
 	/*
 	In the end, delete the Irrlicht device.
 	*/

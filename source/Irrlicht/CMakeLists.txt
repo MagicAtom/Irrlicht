@@ -1,12 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
-project(Irrlicht)
-set(PROJECT_NAME Irrlicht)
-set(CMAKE_CXX_STANDARD 17)
+project(libIrrlicht)
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
 ADD_DEFINITIONS( -D_CRT_SECURE_NO_DEPRECATE )
 
-set(CMAKE_CFLAGS "-I../../include -Izlib -Ijpeglib -Ilibpng")
-set(CMAKE_CXX_FLAGS "-Wall -pipe -fno-exceptions -fno-rtti")
 set(CMAKE_CXX_FLAGS "-D__STDC_CONSTANT_MACROS")
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET
@@ -26,15 +22,8 @@ set(CMAKE_EXE_LINKER_FLAGS "-framework.cppundation -framework.cppcoa -framework 
 endif (APPLE)
 add_compile_options(-Wno-deprecated-declarations)
 
-add_subdirectory(libdatachannel)
-find_package(Threads REQUIRED)
+set(IrrlichtHeader ../../include)
 
-include_directories(../../include)
-include_directories(zlib)
-include_directories(bzip2)
-include_directories(libpng)
-include_directories(lzma)
-include_directories(jpeglib)
 set(IRRMESHLOADER CBSPMeshFileLoader.cpp CMD2MeshFileLoader.cpp CMD3MeshFileLoader.cpp CMS3DMeshFileLoader.cpp CB3DMeshFileLoader.cpp C3DSMeshFileLoader.cpp COgreMeshFileLoader.cpp COBJMeshFileLoader.cpp CColladaFileLoader.cpp CCSMLoader.cpp CDMFLoader.cpp CLMTSMeshFileLoader.cpp CMY3DMeshFileLoader.cpp COCTLoader.cpp CXMeshFileLoader.cpp CIrrMeshFileLoader.cpp CSTLMeshFileLoader.cpp CLWOMeshFileLoader.cpp CPLYMeshFileLoader.cpp CSMFMeshFileLoader.cpp CMeshTextureLoader.cpp)
 set(IRRMESHWRITER CColladaMeshWriter.cpp CIrrMeshWriter.cpp CSTLMeshWriter.cpp COBJMeshWriter.cpp CPLYMeshWriter.cpp CB3DMeshWriter.cpp)
 set(IRRMESHOBJ ${IRRMESHLOADER} ${IRRMESHWRITER} CSkinnedMesh.cpp CBoneSceneNode.cpp CMeshSceneNode.cpp CAnimatedMeshSceneNode.cpp CAnimatedMeshMD2.cpp CAnimatedMeshMD3.cpp CQ3LevelMesh.cpp CQuake3ShaderSceneNode.cpp CAnimatedMeshHalfLife.cpp)
@@ -60,9 +49,12 @@ set(SRC ${IRRMESHOBJ} ${IRROBJ} ${IRRPARTICLEOBJ} ${IRRANIMOBJ} ${IRRVIDEOOBJ} $
 if(APPLE)
 ADD_LIBRARY(Irrlicht CIrrDeviceOSX.mm ${SRC} ${LIBAESGM} ${BZIP2OBJ} ${JPEGLIBOBJ} ${LIBPNGOBJ} ${ZLIBOBJ})
 endif(APPLE)
-
+add_subdirectory(libdatachannel)
+find_package(Threads REQUIRED)
 ADD_LIBRARY(Irrlicht ${SRC} ${LIBAESGM} ${BZIP2OBJ} ${LZMAOBJ} ${JPEGLIBOBJ} ${LIBPNGOBJ} ${ZLIBOBJ})
-
+set_target_properties(Irrlicht PROPERTIES CXX_STANDARD 17)
+set_target_properties(Irrlicht PROPERTIES C_STANDARD 99)
 target_link_libraries(Irrlicht PkgConfig::LIBAV LibDataChannel::LibDataChannel Threads::Threads nlohmann_json)
+target_include_directories(Irrlicht PUBLIC ${IrrlichtHeader} ${CMAKE_CURRENT_SOURCE_DIR}/zlib ${CMAKE_CURRENT_SOURCE_DIR}/bzip2 ${CMAKE_CURRENT_SOURCE_DIR}/libpng ${CMAKE_CURRENT_SOURCE_DIR}/jpeg ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../../lib)

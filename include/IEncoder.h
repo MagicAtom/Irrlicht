@@ -64,7 +64,7 @@ public:
         inlinesize[0] = SCR_WIDTH*3;
         in_buf[0] = (uint8_t*)malloc(sizeof(uint8_t)*SCR_WIDTH*SCR_HEIGHT*3);
         in_buf[1] = nullptr;
-        dump_video_option = false;
+        dump_video_option = true;
     }
 
     void Init()
@@ -157,7 +157,6 @@ public:
     void GenOnePkt(uint8_t* buffer,uint8_t** ret_buf,int& ret_buf_size)
     {
         // TODO: please reverse the picture upside down
-        flip(&buffer);
         memcpy(in_buf[0],buffer,sizeof(uint8_t)*SCR_HEIGHT*SCR_WIDTH*3);
         in_buf[1] = nullptr;
         // Dump
@@ -167,8 +166,8 @@ public:
                                frameYUV->data,frameYUV->linesize);
         if(height <= 0) exit(1);
         // TODO: whether pts info needed should be further discuss
-        //frameYUV->pts = (frame_count++)*(stream->time_base.den)/((stream->time_base.num)*25);
-        frameYUV->pts = AV_NOPTS_VALUE;
+        frameYUV->pts = (frame_count++)*(stream->time_base.den)/((stream->time_base.num)*25);
+        //frameYUV->pts = AV_NOPTS_VALUE;
         int ret = avcodec_send_frame(codecCtx,frameYUV);
         if(ret < 0){
             printf("Error sending a frame for encoding");
